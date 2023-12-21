@@ -98,6 +98,83 @@ func getValueInPosition(line []byte, index int) int {
     return value
 }
 
+func numberOfPartsNumbers(data [][]byte, x, y int) int {
+    number := 0
+    if is_number(data[y][x-1]) {
+        number++
+    }
+    if is_number(data[y][x+1]) {
+        number++
+    }
+
+    if is_number(data[y-1][x]) {
+        number++
+    } else {
+        if is_number(data[y-1][x-1]) {
+            number++
+        }
+        if is_number(data[y-1][x+1]) {
+            number++
+        }
+    }
+
+    if is_number(data[y+1][x]) {
+        number++
+    } else {
+        if is_number(data[y+1][x-1]) {
+            number++
+        }
+        if is_number(data[y+1][x+1]) {
+            number++
+        }
+    }
+
+    return number
+}
+
+func sumGearRatios(data [][]byte) int {
+    sum := 0
+    for y := 1; y < 139; y+=1 {
+        for x := 1; x < 139; x++ {
+            if data[y][x] == '*' && numberOfPartsNumbers(data, x, y) == 2 {
+                gearRatio := 1
+                if is_number(data[y][x-1]) {
+                    gearRatio *= getValueInPosition(data[y], x-1)
+                }
+                if is_number(data[y][x+1]) {
+                    gearRatio *= getValueInPosition(data[y], x+1)
+                }
+
+                if is_number(data[y-1][x]) {
+                    gearRatio *= getValueInPosition(data[y-1], x)
+                }else{
+                    if is_number(data[y-1][x-1]) {
+                        gearRatio *= getValueInPosition(data[y-1], x-1)
+                    }
+                    if is_number(data[y-1][x+1]) {
+                        gearRatio *= getValueInPosition(data[y-1], x+1)
+                    }
+                }
+
+                if is_number(data[y+1][x]) {
+                    gearRatio *= getValueInPosition(data[y+1], x)
+                }else{
+                    if is_number(data[y+1][x-1]) {
+                        gearRatio *= getValueInPosition(data[y+1], x-1)
+                    }
+                    if is_number(data[y+1][x+1]) {
+                        gearRatio *= getValueInPosition(data[y+1], x+1)
+                    }
+                }
+
+                sum+=gearRatio
+
+            }
+        }
+    }
+    return sum
+}
+
 func main(){
     file, err := os.Open("input.txt")
     if err != nil {
@@ -115,7 +192,7 @@ func main(){
             data[idx][i] = line[i]
         }
     }
-    sum := sumAllParts(data)
-    fmt.Println("The sum of all parts numbers is ", sum)
+    sum := sumGearRatios(data)
+    fmt.Println("The sum of all gear ratios is ", sum)
 
 }
