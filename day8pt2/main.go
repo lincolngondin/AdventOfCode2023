@@ -37,34 +37,42 @@ func takeSteps(mapa map[string]MapNode, inst string) int {
     instPos := 0
 
     var startingPoints []string = make([]string, 0)
-    var endPoints []string = make([]string, 0)
+    var values []int = make([]int, 0)
     for k, _ := range(mapa) {
         if isStartingPoint(k){
             startingPoints = append(startingPoints, strings.Clone(k))
-        }
-        if isFinalNode(k){
-            endPoints = append(endPoints, k)
+            values = append(values, 0)
         }
     }
     pointsSize := len(startingPoints)
 
-    
-    for steps = 0; !nodesEndsWithZ(startingPoints); steps++{
-        dir := rune(inst[instPos])
-        for i := 0; i < pointsSize; i++ {
+    var step int = 0
+    fmt.Println(values)
+
+    for i := 0; i < pointsSize; i++ {
+        
+        instPos = 0
+        step = 0
+        for {
+            dir := rune(inst[instPos])
             if dir == 'L' {
                 startingPoints[i] = mapa[startingPoints[i]].left
             } else {
                 startingPoints[i] = mapa[startingPoints[i]].right
             }
+            step++
+            if isFinalNode(startingPoints[i]) {
+                break
+            }
+            instPos++
+            if instPos >= instSize {
+                instPos = 0
+            }
         }
-
-        
-        instPos++
-        if instPos >= instSize {
-            instPos = 0
-        }
+        values[i] = step
     }
+    fmt.Println(startingPoints)
+    fmt.Println(values)
     return steps
 }
 
@@ -89,7 +97,7 @@ func getMapAndInstructions(scan *bufio.Scanner) (map[string]MapNode, string) {
         var left, right string
         fmt.Sscanf(parts2[0], "(%s", &left)
         fmt.Sscanf(strings.ReplaceAll(parts2[1], ")", ""), " %s)", &right)
-        mapa[parts[0]] = MapNode{left, right}
+        mapa[strings.Clone(parts[0])] = MapNode{strings.Clone(left), strings.Clone(right)}
     }
     return mapa, instructions
 }
